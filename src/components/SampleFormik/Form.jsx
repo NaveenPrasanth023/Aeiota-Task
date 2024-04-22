@@ -18,24 +18,9 @@ import {
 import * as Yup from "yup";
 
 export const SampleForm = () => {
-  const onSubmit = (values) => {
-    console.log(values);
-  };
   useEffect(() => {
     loadCaptchaEnginge(6);
   }, []);
-
-  // useEffect(() => {
-  //   doSubmit = () => {
-  //     let user_captcha_value = captcha;
-
-  //     if (validateCaptcha(user_captcha_value)) {
-  //       alert("Captcha Matched");
-  //     } else {
-  //       alert("Captcha Does Not Match");
-  //     }
-  //   };
-  // }, [captcha]);
 
   const validateschema = Yup.object({
     name: Yup.string().required("Name is required"),
@@ -46,7 +31,9 @@ export const SampleForm = () => {
       .required("Email is required"),
     loginid: Yup.string().required("Login ID is required"),
     password: Yup.string().required("Password is required"),
-    confirmpassword: Yup.string().required("Confirm Password is required"),
+    confirmpassword: Yup.string().required(
+      "Confirm Password should br same as password"
+    ),
     captcha: Yup.string().required("Captcha is required"),
   });
   const formik = useFormik({
@@ -58,22 +45,24 @@ export const SampleForm = () => {
       loginIdSameAsEmail: "",
       loginid: "",
       password: "",
-      confirmpassword: "",
+      confirmpasswordVerify: "",
       captcha: "",
     },
     validationSchema: validateschema,
-    // validate: (values) => {
-    //   const error = {};
-    //   if (!values.name) {
-    //     error.name = "Required";
-    //   }
-    //   return error;
-    // },
+
     onSubmit: (values) => {
-      console.log(values);
+      let user_captcha_value = values.captcha;
+      if (validateCaptcha(user_captcha_value)) {
+        console.log(values);
+      } else {
+        console.log("Captcha Does Not Match");
+        alert("Captcha does not Match");
+      }
     },
   });
+
   console.log(formik.errors);
+
   return (
     <>
       <div className="App">
@@ -88,22 +77,11 @@ export const SampleForm = () => {
               onChange={formik.handleChange}
               value={formik.values.name}
             />
-            {/* <input
-              id="name"
-              type="text"
-              name="name"
-              onChange={formik.handleChange}
-              value={formik.values.name}
-            /> */}
+
             {!formik.values.name ? formik.errors.name : null}
             <br />
             <label htmlFor="surname">Surname:</label>
-            {/* <input
-              id="surname"
-              type="text"
-              name="surname"
-              onChange={formik.handleChange}
-            /> */}
+
             <TextField
               id="surname"
               type="text"
@@ -115,12 +93,6 @@ export const SampleForm = () => {
             {!formik.values.surname ? formik.errors.surname : null}
             <br />
             <label htmlFor="dob">Date of Birth:</label>
-            {/* <input
-              id="dob"
-              type="date"
-              name="dob"
-              onChange={formik.handleChange}
-            /> */}
             <TextField
               id="dob"
               type="date"
@@ -132,14 +104,7 @@ export const SampleForm = () => {
             {!formik.values.dob ? formik.errors.dob : null}
             <br />
             <label htmlFor="email">Email:</label>
-            {/* <input
-              id="email"
-              type="email"
-              name="email"
-              value={formik.values.email}
-              onChange={formik.handleChange}
-            /> */}
-            {/* <FormLabel htmlFor="email">Email</FormLabel> */}
+
             <TextField
               id="email"
               type="email"
@@ -155,38 +120,6 @@ export const SampleForm = () => {
                 Do you want your Login Id <br />
                 to be same as E-mail Id?:
               </label>
-              {/* <label>
-              <input
-                type="radio"
-                name="loginIdSameAsEmail"
-                // checked={() => {
-                // formik.values.loginIdSameAsEmail = "yes";
-                // console.log("ndjdjd");
-                // }}
-                // onClick={() => {
-                //   console.log("clickesd");
-                //   formik.values.loginIdSameAsEmail === "yes"
-                //     ? (formik.values.loginid = formik.values.email)
-                //     : null;
-                // }}
-                // onChange={(e) => {
-                //   console.log(e.target.value);
-                // }}
-                value="yes"
-                onChange={formik.handleChange}
-              />
-              Yes
-            </label>
-            <label>
-              <input
-                type="radio"
-                name="loginIdSameAsEmail"
-                value="no"
-                // checked={formik.values.loginIdSameAsEmail === false}
-                // onChange={formik.handleChange}
-              />
-              No
-            </label> */}
               <RadioGroup
                 row
                 name="loginIdSameAsEmail"
@@ -211,18 +144,7 @@ export const SampleForm = () => {
                   : (formik.values.loginid = "")
               }
             />
-            {/* <input
-              id="loginid"
-              type="email"
-              name="loginid"
-              value={
-                formik.values.loginIdSameAsEmail === "yes"
-                  ? // ? console.log("hi")
-                    (formik.values.loginid = formik.values.email)
-                  : (formik.values.loginid = "")
-              }
-              onChange={formik.handleChange}
-            />{" "} */}
+
             {!formik.values.loginid ? formik.errors.loginid : null}
             <br />
             <label htmlFor="password">Password:</label>
@@ -234,12 +156,7 @@ export const SampleForm = () => {
               onChange={formik.handleChange}
               value={formik.values.password}
             />
-            {/* <input
-              id="password"
-              type="password"
-              name="password"
-              onChange={formik.handleChange}
-            />{" "} */}
+
             {!formik.values.password ? formik.errors.password : null}
             <br />
             <label htmlFor="confirmpassword">Confirm Password:</label>
@@ -251,12 +168,7 @@ export const SampleForm = () => {
               onChange={formik.handleChange}
               value={formik.values.confirmpassword}
             />
-            {/* <input
-              id="confirmpassword"
-              type="password"
-              name="confirmpassword"
-              onChange={formik.handleChange}
-            />{" "} */}
+
             {!formik.values.confirmpassword
               ? formik.errors.confirmpassword
               : null}
@@ -271,12 +183,7 @@ export const SampleForm = () => {
               onChange={formik.handleChange}
               value={formik.values.captcha}
             />
-            {/* <input
-              id="captcha"
-              type="text"
-              name="captcha"
-              onChange={formik.handleChange}
-            /> */}
+
             <br />
             <Button variant="contained" type="submit">
               Submit
@@ -287,4 +194,3 @@ export const SampleForm = () => {
     </>
   );
 };
-//sample
