@@ -6,9 +6,11 @@ import {
   Radio,
   RadioGroup,
   TextField,
+  Typography,
 } from "@mui/material";
 import { useFormik } from "formik";
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   loadCaptchaEnginge,
   LoadCanvasTemplate,
@@ -21,7 +23,7 @@ export const SampleForm = () => {
   useEffect(() => {
     loadCaptchaEnginge(6);
   }, []);
-
+  const navigate = useNavigate();
   const validateschema = Yup.object({
     name: Yup.string().required("Name is required"),
     surname: Yup.string().required("Surname is required"),
@@ -31,7 +33,7 @@ export const SampleForm = () => {
       .required("Email is required"),
     loginid: Yup.string().required("Login ID is required"),
     password: Yup.string().required("Password is required"),
-    confirmpassword: Yup.string().required(
+    confirmpasswordVerify: Yup.string().required(
       "Confirm Password should br same as password"
     ),
     captcha: Yup.string().required("Captcha is required"),
@@ -54,19 +56,25 @@ export const SampleForm = () => {
       let user_captcha_value = values.captcha;
       if (validateCaptcha(user_captcha_value)) {
         console.log(values);
+        navigate("/");
       } else {
         console.log("Captcha Does Not Match");
         alert("Captcha does not Match");
       }
     },
   });
-
+  const loginData = {
+    id: formik.values.loginid,
+    password: formik.values.password,
+  };
+  console.log(loginData);
   console.log(formik.errors);
-
+  localStorage.setItem("loginData", JSON.stringify(loginData));
   return (
     <>
       <div className="App">
         <Box component="section">
+          <Typography variant="h5">SignUp</Typography>
           <form onSubmit={formik.handleSubmit}>
             <label htmlFor="name">Name:</label>
             <TextField
@@ -74,19 +82,21 @@ export const SampleForm = () => {
               type="text"
               name="name"
               size="small"
+              error={formik.errors.name}
+              helperText={!formik.values.name ? formik.errors.name : null}
               onChange={formik.handleChange}
               value={formik.values.name}
             />
-
-            {!formik.values.name ? formik.errors.name : null}
+            {/* {!formik.values.name ? formik.errors.name : null} */}
             <br />
             <label htmlFor="surname">Surname:</label>
-
             <TextField
               id="surname"
               type="text"
               name="surname"
               size="small"
+              error={formik.errors.surname}
+              helperText={!formik.values.surname ? formik.errors.surname : null}
               onChange={formik.handleChange}
               value={formik.values.surname}
             />
@@ -98,18 +108,19 @@ export const SampleForm = () => {
               type="date"
               name="dob"
               size="small"
+              error={formik.errors.dob}
               onChange={formik.handleChange}
               value={formik.values.dob}
             />
             {!formik.values.dob ? formik.errors.dob : null}
             <br />
             <label htmlFor="email">Email:</label>
-
             <TextField
               id="email"
               type="email"
               name="email"
               size="small"
+              error={formik.errors.email}
               onChange={formik.handleChange}
               value={formik.values.email}
             />
@@ -137,6 +148,7 @@ export const SampleForm = () => {
               type="email"
               name="loginid"
               size="small"
+              error={formik.errors.loginid}
               onChange={formik.handleChange}
               value={
                 formik.values.loginIdSameAsEmail === "yes"
@@ -144,7 +156,6 @@ export const SampleForm = () => {
                   : (formik.values.loginid = "")
               }
             />
-
             {!formik.values.loginid ? formik.errors.loginid : null}
             <br />
             <label htmlFor="password">Password:</label>
@@ -153,24 +164,24 @@ export const SampleForm = () => {
               type="password"
               name="password"
               size="small"
+              error={formik.errors.password}
               onChange={formik.handleChange}
               value={formik.values.password}
             />
-
             {!formik.values.password ? formik.errors.password : null}
             <br />
-            <label htmlFor="confirmpassword">Confirm Password:</label>
+            <label htmlFor="confirmpasswordVerify">Confirm Password:</label>
             <TextField
-              id="confirmpassword"
+              id="confirmpasswordVerify"
               type="password"
-              name="confirmpassword"
+              name="confirmpasswordVerify"
               size="small"
+              error={formik.errors.confirmpasswordVerify}
               onChange={formik.handleChange}
-              value={formik.values.confirmpassword}
+              value={formik.values.confirmpasswordVerify}
             />
-
-            {!formik.values.confirmpassword
-              ? formik.errors.confirmpassword
+            {!formik.values.confirmpasswordVerify
+              ? formik.errors.confirmpasswordVerify
               : null}
             <br />
             <label htmlFor="captcha">Captcha:</label>
@@ -180,10 +191,10 @@ export const SampleForm = () => {
               type="text"
               name="captcha"
               size="small"
+              error={formik.errors.captcha}
               onChange={formik.handleChange}
               value={formik.values.captcha}
             />
-
             <br />
             <Button variant="contained" type="submit">
               Submit

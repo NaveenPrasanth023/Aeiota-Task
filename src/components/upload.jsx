@@ -2,11 +2,13 @@ import { upload } from "@testing-library/user-event/dist/upload";
 import axios from "axios";
 import React from "react";
 import { uploadImageToData } from "./instancehelper";
+import { useNavigate } from "react-router-dom";
+import { Button } from "@mui/material";
 
 const UploadImage = () => {
   const [imageURL, setImageURL] = React.useState("");
   const [imageFile, setImageFile] = React.useState({});
-
+  const navigate = useNavigate();
   const previewImage = (event) => {
     const file = event.target.files[0];
     console.log(file);
@@ -43,6 +45,11 @@ const UploadImage = () => {
   };
   return (
     <>
+      <h3>Home</h3>
+      <div>
+        <Button onClick={() => navigate("/")}>Login</Button>
+        <Button onClick={() => navigate("/signup")}>SignUp</Button>
+      </div>
       <form onSubmit={uploadToData}>
         <input type="file" onChange={previewImage} />
         <button type="submit">Upload</button>
